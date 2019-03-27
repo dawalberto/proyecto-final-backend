@@ -1,10 +1,18 @@
 const app = require('express')()
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 require('./config/config')
 
 
 app.use( bodyParser.urlencoded({extended: false}) )
 app.use( require('./endpoints/endpoints') )
+
+
+mongoose.connect(process.env.URLDB,{ useNewUrlParser: true }, (err, res) => {
+    if (err) throw err
+
+    console.log('Base de datos ONLINE')
+})
 
 
 app.listen(process.env.PORT, () => {

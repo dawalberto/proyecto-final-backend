@@ -4,6 +4,10 @@ let Schema = mongoose.Schema
 
 let conciertoSchema = new Schema({
 
+    usuario: {
+        type: Schema.Types.ObjectId,
+        ref: 'Usuario'
+    },
     titulo: {
         type: String,
         required: [true, 'El título es obligatorio']
@@ -15,6 +19,22 @@ let conciertoSchema = new Schema({
     precio: {
         type: Number,
         required: [true, 'El precio es obligatorio']
+    },
+    fecha: {
+        type: String,
+        required: [true, 'La fecha es obligatoria']
+    },
+    ubicacion: {
+        type: String,
+        required: [true, 'La ubicación es obligatoria']
+    },
+    hora: {
+        type: String,
+        required: [true, 'La hora es obligatoria']
+    },
+    terminado: {
+        type: Boolean,
+        default: false
     }
 
 })

@@ -4,22 +4,24 @@ const Concierto = require('../models/concierto')
 
 app.get('/conciertos', (req, res) => {
 
-    Concierto.find({}, (err, conciertosDB) => {
+    Concierto.find({})
+        .populate('usuario', 'nombre guitarra')
+        .exec((err, conciertosDB) => {
 
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            res.json({
+                ok: true,
+                request: 'GET /conciertos',
+                conciertos: conciertosDB
             })
-        }
 
-        res.json({
-            ok: true,
-            request: 'GET /conciertos',
-            conciertos: conciertosDB
         })
-
-    })
 
 
 })
@@ -31,7 +33,11 @@ app.post('/conciertos', (req, res) => {
     let concierto = new Concierto({
         titulo: body.titulo,
         descripcion: body.descripcion,
-        precio: body.precio
+        precio: body.precio,
+        usuario: body.usuario,
+        fecha: body.fecha,
+        ubicacion: body.ubicacion,
+        hora: body.hora
     })
 
     concierto.save((err, conciertoDB) => {

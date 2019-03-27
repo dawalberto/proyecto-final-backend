@@ -4,7 +4,7 @@ const Usuario = require('../models/usuario')
 
 app.get('/usuarios', (req, res) => {
 
-    Usuario.find({}, (err, usuariosDB) => {
+    Usuario.find({estado: true}, (err, usuariosDB) => {
 
         if (err) {
             return res.status(400).json({
@@ -25,12 +25,23 @@ app.get('/usuarios', (req, res) => {
 
 app.post('/usuarios', (req, res) => {
 
-    let nombre = req.body.nombre
-    let apellidos = req.body.apellidos
+    let body = req.body
 
     let usuario = new Usuario({
-        nombre,
-        apellidos
+        nombre: body.nombre,
+        apellidos: body.apellidos,
+        email: body.email,
+        password: body.password,
+        sexo: body.sexo,
+        nacionalidad: body.nacionalidad,
+        biografia: body.biografia,
+        fechaNac: body.fechaNac,
+        guitarra: body.guitarra,
+        nomUsuario: body.nomUsuario,
+        img: body.img,
+        webpage: body.webpage,
+        redes: body.redes,
+        conciertos: body.conciertos,
     })
 
     usuario.save((err, usuarioDB) => {

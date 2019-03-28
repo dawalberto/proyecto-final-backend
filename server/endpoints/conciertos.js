@@ -1,12 +1,13 @@
 const app = require('express')()
 const _ = require('underscore')
 const Concierto = require('../models/concierto')
+const Usuario = require('../models/usuario')
 
 
 app.get('/conciertos', (req, res) => {
 
     Concierto.find({})
-        .populate('usuario', 'nombre guitarra')
+        .populate('usuario', 'nombre apellidos guitarra')
         .exec((err, conciertosDB) => {
 
             if (err) {
@@ -65,7 +66,7 @@ app.get('/conciertos/:id', (req, res) => {
     let id = req.params.id
 
     Concierto.findOne({ _id: id })
-        .populate('usuario', 'nombre guitarra')
+        .populate('usuario', 'nombre apellidos guitarra')
         .exec((err, conciertoDB) => {
 
             if (err) {

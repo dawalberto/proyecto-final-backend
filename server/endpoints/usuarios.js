@@ -174,33 +174,36 @@ app.delete('/usuarios/:id', (req, res) => {
 
 })
 
-app.get('/usuarios/:id/cuenta', (req, res) => {
+app.get('/usuarios/buscar/:nombre', (req, res) => {
 
-    let id = req.params.id
+    let nombre = req.params.nombre
 
-    Usuario.findOne({ _id: id, estado: true }, ['nomUsuario', 'email'], (err, usuarioDB) => {
+    let regex = new RegExp(nombre, 'i')
 
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                msg: 'Usuario no encontrado',
-                err
+    Usuario.find({ $or: [ {nombre: regex}, {apellidos: regex} ] , estado: true }, (err, buesquedas) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            if (buesquedas.length === 0) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: `No se encontro ningún usuario con el nombre '${nombre}'`
+                })
+            }
+
+            let recuento = buesquedas.length
+            res.json({
+                ok: true,
+                total: recuento,
+                usuarios: buesquedas
             })
-        }
 
-        if (!usuarioDB) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Usuario no encontrado'
-            })
-        }
-
-        res.json({
-            ok: true,
-            usuario: usuarioDB
         })
-
-    })
 
 })
 

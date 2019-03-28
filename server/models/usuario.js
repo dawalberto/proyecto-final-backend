@@ -65,10 +65,6 @@ let usuarioSchema = new Schema({
         type: Object,
         required: false
     },
-    conciertos: {
-        type: Boolean,
-        required: false
-    },
     rol: {
         type: String,
         default: 'USER_ROLE',

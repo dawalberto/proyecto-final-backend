@@ -29,7 +29,7 @@ let usuarioSchema = new Schema({
         required: false
     },
     sexo: {
-        type: String,
+        type: Boolean,
         required: [true, 'El sexo es obligatorio']
     },
     nacionalidad: {

@@ -8,7 +8,7 @@ app.use( bodyParser.urlencoded({extended: false}) )
 app.use( require('./endpoints/endpoints') )
 
 
-mongoose.connect(process.env.URLDB,{ useNewUrlParser: true }, (err, res) => {
+mongoose.connect(process.env.URLDB,{ useCreateIndex: true, useNewUrlParser: true }, (err, res) => {
     if (err) throw err
 
     console.log('Base de datos ONLINE')

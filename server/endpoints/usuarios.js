@@ -1,5 +1,6 @@
 const app = require('express')()
 const _ = require('underscore')
+const bcrypt = require('bcrypt')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')
 
@@ -32,7 +33,7 @@ app.post('/usuarios', (req, res) => {
         nombre: body.nombre,
         apellidos: body.apellidos,
         email: body.email,
-        password: body.password,
+        password: bcrypt.hashSync(body.password, 10),
         sexo: body.sexo,
         nacionalidad: body.nacionalidad,
         biografia: body.biografia,
@@ -97,7 +98,7 @@ app.get('/usuarios/:id', (req, res) => {
 app.put('/usuarios/:id', (req, res) => {
 
     let id = req.params.id
-    let body = _.pick( req.body, ['nombre', 'apellidos', 'img', 'webpage', 'nacionalidad', 'biografia', 'fechaNac', 'guitarra', 'redes', 'conciertos', 'sexo'])
+    let body = _.pick( req.body, ['email', 'nomUsuario', 'rol', 'nombre', 'apellidos', 'img', 'webpage', 'nacionalidad', 'biografia', 'fechaNac', 'guitarra', 'redes', 'conciertos', 'sexo'])
 
     Usuario.updateOne({_id: id}, body, (err, updated) => {
 

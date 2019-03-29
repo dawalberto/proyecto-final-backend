@@ -62,7 +62,7 @@ let usuarioSchema = new Schema({
         required: false
     },
     redes: {
-        type: Object,
+        type: Array,
         required: false
     },
     rol: {

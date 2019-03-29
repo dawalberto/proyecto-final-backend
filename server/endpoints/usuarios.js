@@ -16,8 +16,18 @@ app.get('/usuarios', (req, res) => {
             })
         }
 
+        let recuento = usuariosDB.length
+
+        if (recuento === 0) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No se encontraron usuarios'
+            })
+        }
+
         res.json({
             ok: true,
+            total: recuento,
             usuarios: usuariosDB
         })
     
@@ -28,6 +38,11 @@ app.get('/usuarios', (req, res) => {
 app.post('/usuarios', (req, res) => {
 
     let body = req.body
+    let redes = ''
+
+    if (body.redes) {
+        redes = JSON.parse(body.redes)
+    }
 
     let usuario = new Usuario({
         nombre: body.nombre,
@@ -42,7 +57,7 @@ app.post('/usuarios', (req, res) => {
         nomUsuario: body.nomUsuario,
         img: body.img,
         webpage: body.webpage,
-        redes: body.redes,
+        redes,
         conciertos: body.conciertos,
     })
 
@@ -57,6 +72,7 @@ app.post('/usuarios', (req, res) => {
 
         res.json({
             ok: true,
+            msg: 'Usuario creado',
             usuario: usuarioDB
         })
 
@@ -92,15 +108,19 @@ app.get('/usuarios/:id', (req, res) => {
 
     })
 
-
 })
 
 app.put('/usuarios/:id', (req, res) => {
 
     let id = req.params.id
-    let body = _.pick( req.body, ['email', 'nomUsuario', 'rol', 'nombre', 'apellidos', 'img', 'webpage', 'nacionalidad', 'biografia', 'fechaNac', 'guitarra', 'redes', 'conciertos', 'sexo'])
 
-    Usuario.updateOne({_id: id}, body, (err, updated) => {
+    let body = _.pick( req.body, ['email', 'nomUsuario', 'rol', 'nombre', 'apellidos', 'img', 'webpage', 'nacionalidad', 'biografia', 'fechaNac', 'guitarra', 'redes', 'sexo'])
+
+    if (req.body.redes) {
+        body.redes = JSON.parse(body.redes)
+    }
+
+    Usuario.updateOne({_id: id, estado: true}, body, (err, updated) => {
 
         if (err) {
             return res.status(500).json({
@@ -190,14 +210,15 @@ app.get('/usuarios/buscar/:nombre', (req, res) => {
                 })
             }
 
-            if (buesquedas.length === 0) {
+            let recuento = buesquedas.length
+
+            if (recuento === 0) {
                 return res.status(400).json({
                     ok: false,
                     msg: `No se encontro ningún usuario con el nombre '${nombre}'`
                 })
             }
 
-            let recuento = buesquedas.length
             res.json({
                 ok: true,
                 total: recuento,

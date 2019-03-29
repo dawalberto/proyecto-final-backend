@@ -41,7 +41,7 @@ let usuarioSchema = new Schema({
         required: false
     },
     fechaNac: {
-        type: String,
+        type: Date,
         required: false
     },
     guitarra: {
@@ -77,6 +77,10 @@ let usuarioSchema = new Schema({
     estado: {
         type: Boolean,
         default: true
+    },
+    fechaRegistro: {
+        type: Date,
+        default: new Date()
     }
 
 })

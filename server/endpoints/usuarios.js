@@ -44,6 +44,8 @@ app.post('/usuarios', (req, res) => {
         redes = JSON.parse(body.redes)
     }
 
+    let fechaNac = new Date(body.fechaNac)
+
     let usuario = new Usuario({
         nombre: body.nombre,
         apellidos: body.apellidos,
@@ -52,7 +54,7 @@ app.post('/usuarios', (req, res) => {
         sexo: body.sexo,
         nacionalidad: body.nacionalidad,
         biografia: body.biografia,
-        fechaNac: body.fechaNac,
+        fechaNac,
         guitarra: body.guitarra,
         nomUsuario: body.nomUsuario,
         img: body.img,
@@ -72,7 +74,7 @@ app.post('/usuarios', (req, res) => {
 
         res.json({
             ok: true,
-            msg: 'Usuario creado',
+            msg: 'Usuario creado correctamente',
             usuario: usuarioDB
         })
 
@@ -119,6 +121,8 @@ app.put('/usuarios/:id', (req, res) => {
     if (req.body.redes) {
         body.redes = JSON.parse(body.redes)
     }
+
+    body.fechaNac = new Date(body.fechaNac)
 
     Usuario.updateOne({_id: id, estado: true}, body, (err, updated) => {
 

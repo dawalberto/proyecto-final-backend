@@ -3,6 +3,7 @@ const _ = require('underscore')
 const bcrypt = require('bcrypt')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')
+const { verificarToken } = require('../middlewares/autenticacion')
 
 
 app.get('/usuarios', (req, res) => {
@@ -112,7 +113,7 @@ app.get('/usuarios/:id', (req, res) => {
 
 })
 
-app.put('/usuarios/:id', (req, res) => {
+app.put('/usuarios/:id', verificarToken, (req, res) => {
 
     let id = req.params.id
 
@@ -150,7 +151,7 @@ app.put('/usuarios/:id', (req, res) => {
 
 })
 
-app.delete('/usuarios/:id', (req, res) => {
+app.delete('/usuarios/:id', verificarToken, (req, res) => {
 
     let id = req.params.id
 

@@ -1,7 +1,7 @@
 const app = require('express')()
 const _ = require('underscore')
 const Concierto = require('../models/concierto')
-const Usuario = require('../models/usuario')
+const { verificarToken } = require('../middlewares/autenticacion')
 
 
 app.get('/conciertos', (req, res) => {
@@ -17,9 +17,11 @@ app.get('/conciertos', (req, res) => {
                 })
             }
 
+            let recuento = conciertosDB.length
+
             res.json({
                 ok: true,
-                msg: 'Conciertos obtenidos',
+                total: recuento,
                 conciertos: conciertosDB
             })
 
@@ -28,7 +30,7 @@ app.get('/conciertos', (req, res) => {
 
 })
 
-app.post('/conciertos', (req, res) => {
+app.post('/conciertos', verificarToken, (req, res) => {
 
     let body = req.body
 
@@ -92,12 +94,12 @@ app.get('/conciertos/:id', (req, res) => {
 
 })
 
-app.put('/conciertos/:id', (req, res) => {
+app.put('/conciertos/:id', verificarToken, (req, res) => {
 
     let id = req.params.id
     let body = _.pick(req.body, ['titulo', 'descripcion', 'fecha', 'precio', 'ubicacion', 'hora', 'terminado'])
 
-    Concierto.updateOne({_id: id}, body, (err, updated) => {
+    Concierto.findOne({ _id: id }, (err, conciertoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -106,28 +108,56 @@ app.put('/conciertos/:id', (req, res) => {
             })
         }
 
-        if (updated.nModified === 0) {
+        if (!conciertoDB) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Concierto no encontrado o no actualizado'
+                msg: 'Concierto no encontrado'
             })
         }
 
-        res.json({
-            ok: true,
-            msg: 'Concierto actualizado correctamente',
-            update: updated
+        let idUsuarioConcierto = String(conciertoDB.usuario._id)
+        let idUsuarioLoged = req.usuario._id
+
+        if (idUsuarioConcierto !== idUsuarioLoged) {
+            return res.status(401).json({
+                ok: false,
+                msg: 'Permiso denegado'
+            })
+        }
+
+        Concierto.updateOne({_id: id}, body, (err, updated) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+    
+            if (updated.nModified === 0) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Concierto no encontrado o no actualizado'
+                })
+            }
+    
+            res.json({
+                ok: true,
+                msg: 'Concierto actualizado correctamente',
+                update: updated
+            })
+    
         })
 
     })
 
 })
 
-app.delete('/conciertos/:id', (req, res) => {
+app.delete('/conciertos/:id', verificarToken, (req, res) => {
 
     let id = req.params.id
 
-    Concierto.deleteOne({_id: id}, (err, conciertoDeleted) => {
+    Concierto.findOne({ _id: id }, (err, conciertoDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -136,17 +166,45 @@ app.delete('/conciertos/:id', (req, res) => {
             })
         }
 
-        if (conciertoDeleted.deletedCount === 0) {
+        if (!conciertoDB) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Concierto no encontrado o no eliminado'
+                msg: 'Concierto no encontrado'
             })
         }
 
-        res.json({
-            ok: true,
-            msg: 'Concierto eliminado correctamente',
-            conciertoDeleted
+        let idUsuarioConcierto = String(conciertoDB.usuario._id)
+        let idUsuarioLoged = req.usuario._id
+
+        if (idUsuarioConcierto !== idUsuarioLoged) {
+            return res.status(401).json({
+                ok: false,
+                msg: 'Permiso denegado'
+            })
+        }
+
+        Concierto.deleteOne({_id: id}, (err, conciertoDeleted) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+    
+            if (conciertoDeleted.deletedCount === 0) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Concierto no encontrado o no eliminado'
+                })
+            }
+    
+            res.json({
+                ok: true,
+                msg: 'Concierto eliminado correctamente',
+                conciertoDeleted
+            })
+    
         })
 
     })

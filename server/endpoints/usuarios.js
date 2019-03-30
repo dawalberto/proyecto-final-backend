@@ -3,7 +3,7 @@ const _ = require('underscore')
 const bcrypt = require('bcrypt')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')
-const { verificarToken } = require('../middlewares/autenticacion')
+const { verificarToken, verificarUsuario } = require('../middlewares/autenticacion')
 
 
 app.get('/usuarios', (req, res) => {
@@ -18,13 +18,6 @@ app.get('/usuarios', (req, res) => {
         }
 
         let recuento = usuariosDB.length
-
-        if (recuento === 0) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'No se encontraron usuarios'
-            })
-        }
 
         res.json({
             ok: true,
@@ -113,7 +106,7 @@ app.get('/usuarios/:id', (req, res) => {
 
 })
 
-app.put('/usuarios/:id', verificarToken, (req, res) => {
+app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     let id = req.params.id
 
@@ -151,7 +144,7 @@ app.put('/usuarios/:id', verificarToken, (req, res) => {
 
 })
 
-app.delete('/usuarios/:id', verificarToken, (req, res) => {
+app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     let id = req.params.id
 

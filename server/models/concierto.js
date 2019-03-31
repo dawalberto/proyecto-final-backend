@@ -21,7 +21,7 @@ let conciertoSchema = new Schema({
         required: [true, 'El precio es obligatorio']
     },
     fecha: {
-        type: String,
+        type: Date,
         required: [true, 'La fecha es obligatoria']
     },
     ubicacion: {
@@ -35,6 +35,10 @@ let conciertoSchema = new Schema({
     terminado: {
         type: Boolean,
         default: false
+    },
+    fechaCreacion: {
+        type: Date,
+        default: new Date()
     }
 
 })

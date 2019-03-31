@@ -34,12 +34,14 @@ app.post('/conciertos', verificarToken, (req, res) => {
 
     let body = req.body
 
+    let fecha = new Date(body.fecha)
+
     let concierto = new Concierto({
         titulo: body.titulo,
         descripcion: body.descripcion,
         precio: body.precio,
         usuario: body.usuario,
-        fecha: body.fecha,
+        fecha,
         ubicacion: body.ubicacion,
         hora: body.hora
     })
@@ -98,6 +100,8 @@ app.put('/conciertos/:id', verificarToken, (req, res) => {
 
     let id = req.params.id
     let body = _.pick(req.body, ['titulo', 'descripcion', 'fecha', 'precio', 'ubicacion', 'hora', 'terminado'])
+
+    body.fecha = new Date(body.fecha)
 
     Concierto.findOne({ _id: id }, (err, conciertoDB) => {
 
@@ -226,7 +230,9 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
             })
         }
 
-        if (conciertosDB.length === 0) {
+        let recuento = conciertosDB.length
+
+        if (recuento === 0) {
             return res.status(500).json({
                 ok: false,
                 msg: 'No se encontraron conciertos para este usuario o no existe el usuario'
@@ -235,6 +241,7 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
 
         res.json({
             ok: true,
+            total: recuento,
             conciertos: conciertosDB
         })
 

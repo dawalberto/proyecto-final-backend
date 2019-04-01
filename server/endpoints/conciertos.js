@@ -8,6 +8,7 @@ app.get('/conciertos', (req, res) => {
 
     Concierto.find({})
         .populate('usuario', 'nombre apellidos guitarra')
+        .populate('programa', 'nombre obras')
         .exec((err, conciertosDB) => {
 
             if (err) {
@@ -38,6 +39,7 @@ app.post('/conciertos', verificarToken, (req, res) => {
 
     let concierto = new Concierto({
         titulo: body.titulo,
+        programa: body.programa,
         descripcion: body.descripcion,
         precio: body.precio,
         usuario: body.usuario,
@@ -99,7 +101,7 @@ app.get('/conciertos/:id', (req, res) => {
 app.put('/conciertos/:id', verificarToken, (req, res) => {
 
     let id = req.params.id
-    let body = _.pick(req.body, ['titulo', 'descripcion', 'fecha', 'precio', 'ubicacion', 'hora', 'terminado'])
+    let body = _.pick(req.body, ['titulo', 'programa', 'descripcion', 'fecha', 'precio', 'ubicacion', 'hora', 'terminado'])
 
     body.fecha = new Date(body.fecha)
 

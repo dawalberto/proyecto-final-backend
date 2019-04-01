@@ -8,6 +8,11 @@ let conciertoSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Usuario'
     },
+    programa: {
+        type: Schema.Types.ObjectId,
+        ref: 'Programa',
+        required: false
+    },
     titulo: {
         type: String,
         required: [true, 'El título es obligatorio']

@@ -101,9 +101,39 @@ app.get('/conciertos/:id', (req, res) => {
 app.put('/conciertos/:id', verificarToken, (req, res) => {
 
     let id = req.params.id
-    let body = _.pick(req.body, ['titulo', 'programa', 'descripcion', 'fecha', 'precio', 'ubicacion', 'hora', 'terminado'])
+    let reqBody = req.body
+    let body = {}
 
-    body.fecha = new Date(body.fecha)
+    if (reqBody.fecha) {
+
+        try {
+
+            body.fecha = new Date(reqBody.fecha)
+    
+            if (body.fecha == 'Invalid Date') {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'El formato de la fecha no es correcto'
+                })
+            }
+    
+        } catch {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El formato de la fecha no es correcto'
+            })
+        }
+
+    }
+
+    reqBody.titulo ? body.titulo = reqBody.titulo : ''
+    reqBody.programa ? body.programa = reqBody.programa : ''
+    reqBody.descripcion ? body.descripcion = reqBody.descripcion : ''
+    reqBody.precio ? body.precio = reqBody.precio : ''
+    reqBody.ubicacion ? body.ubicacion = reqBody.ubicacion : ''
+    reqBody.hora ? body.hora = reqBody.hora : ''
+    reqBody.terminado ? body.terminado = reqBody.terminado : ''
+
 
     Concierto.findOne({ _id: id }, (err, conciertoDB) => {
 

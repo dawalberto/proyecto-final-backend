@@ -145,13 +145,14 @@ app.get('/usuarios/:id', (req, res) => {
 app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     let id = req.params.id
+    let reqBody = req.body
+    let body = {}
 
-    let body = _.pick( req.body, ['nombre', 'apellidos', 'img', 'webpage', 'nacionalidad', 'biografia', 'guitarra', 'sexo'])
 
-    if (req.body.redes) {
+    if (reqBody.redes) {
 
         try {
-            body.redes = JSON.parse(req.body.redes)
+            body.redes = JSON.parse(reqBody.redes)
         } catch {
             return res.status(400).json({
                 ok: false,
@@ -161,11 +162,11 @@ app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     }
 
-    if (req.body.fechaNac) {
+    if (reqBody.fechaNac) {
 
         try {
 
-            body.fechaNac = new Date(req.body.fechaNac)
+            body.fechaNac = new Date(reqBody.fechaNac)
     
             if (body.fechaNac == 'Invalid Date') {
                 return res.status(400).json({
@@ -183,17 +184,18 @@ app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     }
 
-    if (req.body.email) {
-        body.email = req.body.email
-    }
+    reqBody.email ? body.email = reqBody.email : ''
+    reqBody.nomUsuario ? body.nomUsuario = reqBody.nomUsuario : ''
+    reqBody.password ? body.password = bcrypt.hashSync(reqBody.password, 10) : ''
+    reqBody.nombre ? body.nombre = reqBody.nombre : ''
+    reqBody.apellidos ? body.apellidos = reqBody.apellidos : ''
+    reqBody.img ? body.img = reqBody.img : ''
+    reqBody.webpage ? body.webpage = reqBody.webpage : ''
+    reqBody.nacionalidad ? body.nacionalidad = reqBody.nacionalidad : ''
+    reqBody.biografia ? body.biografia = reqBody.biografia : ''
+    reqBody.guitarra ? body.guitarra = reqBody.guitarra : ''
+    reqBody.sexo ? body.sexo = reqBody.sexo : ''
 
-    if (req.body.nomUsuario) {
-        body.nomUsuario = req.body.nomUsuario
-    }
-
-    if (req.body.password) {
-        body.password = bcrypt.hashSync(req.body.password, 10)
-    }
 
 
     Usuario.updateOne({_id: id, estado: true}, body, (err, updated) => {

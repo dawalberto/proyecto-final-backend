@@ -32,13 +32,50 @@ app.get('/usuarios', (req, res) => {
 app.post('/usuarios', (req, res) => {
 
     let body = req.body
-    let redes = ''
+    let redes = null
+    let fechaNac = null
 
-    if (body.redes) {
-        redes = JSON.parse(body.redes)
+    if (!body.password) {
+        return res.status(400).json({
+            ok: false,
+            msg: 'La contraseña es obligatoria'
+        })
     }
 
-    let fechaNac = new Date(body.fechaNac)
+    if (body.redes) {
+
+        try {
+            redes = JSON.parse(body.redes)
+        } catch {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El formato de las redes no es correcto'
+            })
+        }
+
+    }
+
+    if (body.fechaNac) {
+
+        try {
+
+            fechaNac = new Date(body.fechaNac)
+    
+            if (fechaNac == 'Invalid Date') {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'El formato de la fecha de nacimiento no es correcto'
+                })
+            }
+    
+        } catch {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El formato de la fecha de nacimiento no es correcto'
+            })
+        }
+
+    }
 
     let usuario = new Usuario({
         nombre: body.nombre,
@@ -53,8 +90,7 @@ app.post('/usuarios', (req, res) => {
         nomUsuario: body.nomUsuario,
         img: body.img,
         webpage: body.webpage,
-        redes,
-        conciertos: body.conciertos,
+        redes
     })
 
     usuario.save((err, usuarioDB) => {
@@ -110,13 +146,55 @@ app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     let id = req.params.id
 
-    let body = _.pick( req.body, ['email', 'nomUsuario', 'rol', 'nombre', 'apellidos', 'img', 'webpage', 'nacionalidad', 'biografia', 'fechaNac', 'guitarra', 'redes', 'sexo'])
+    let body = _.pick( req.body, ['nombre', 'apellidos', 'img', 'webpage', 'nacionalidad', 'biografia', 'guitarra', 'sexo'])
 
     if (req.body.redes) {
-        body.redes = JSON.parse(body.redes)
+
+        try {
+            body.redes = JSON.parse(req.body.redes)
+        } catch {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El formato de las redes no es correcto'
+            })
+        }
+
     }
 
-    body.fechaNac = new Date(body.fechaNac)
+    if (req.body.fechaNac) {
+
+        try {
+
+            body.fechaNac = new Date(req.body.fechaNac)
+    
+            if (body.fechaNac == 'Invalid Date') {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'El formato de la fecha de nacimiento no es correcto'
+                })
+            }
+    
+        } catch {
+            return res.status(400).json({
+                ok: false,
+                msg: 'El formato de la fecha de nacimiento no es correcto'
+            })
+        }
+
+    }
+
+    if (req.body.email) {
+        body.email = req.body.email
+    }
+
+    if (req.body.nomUsuario) {
+        body.nomUsuario = req.body.nomUsuario
+    }
+
+    if (req.body.password) {
+        body.password = bcrypt.hashSync(req.body.password, 10)
+    }
+
 
     Usuario.updateOne({_id: id, estado: true}, body, (err, updated) => {
 

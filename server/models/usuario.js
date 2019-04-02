@@ -22,7 +22,7 @@ let usuarioSchema = new Schema({
     },
     nombre: {
         type: String,
-        required: [true, 'El nombre es obligatorio']
+        required: false
     },
     apellidos: {
         type: String,
@@ -30,7 +30,7 @@ let usuarioSchema = new Schema({
     },
     sexo: {
         type: Boolean,
-        required: [true, 'El sexo es obligatorio']
+        required: false
     },
     nacionalidad: {
         type: String,

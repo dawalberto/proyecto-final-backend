@@ -233,5 +233,39 @@ app.delete('/programas/:id', verificarToken, (req, res) => {
 
 })
 
+app.get('/programas/usuarios/:id', (req, res) => {
+
+    let id = req.params.id
+
+    Programa.find({usuario: { _id: id }})
+        .populate('usuario', 'nombre apellidos guitarra')
+        .exec((err, programasDB) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+        }
+
+        let recuento = programasDB.length
+
+        if (recuento === 0) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'No se encontraron programas para este usuario o no existe el usuario'
+            })
+        }
+
+        res.json({
+            ok: true,
+            total: recuento,
+            programas: programasDB
+        })
+
+    })
+
+})
+
 
 module.exports = app

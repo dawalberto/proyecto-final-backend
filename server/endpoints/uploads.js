@@ -59,11 +59,12 @@ app.put('/uploads/:tipo/:id', [verificarToken, verificarUsuario], (req, res) => 
 
     archivo.mv(`uploads/${ tipo }/${ nombreArchivo }`, (err) => {
 
-        if (err)
-          return res.status(500).json({
-              ok: false,
-              err
-          });
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+        }
     
         // Aqui, imagen cargada
         if (tipo === 'imgusuarios') {
@@ -99,19 +100,33 @@ function imagenUsuario(id, res, nombreArchivo) {
 
         borraArchivo(usuarioDB.img, 'imgusuarios')
 
-        usuarioDB.img = nombreArchivo
+        Usuario.updateOne({ _id: id }, { img: nombreArchivo }, (err, updated) => {
 
-        usuarioDB.save( (err, usuarioGuardado) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            if (updated.nModified === 0) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Usuario no encontrado o no actualizado'
+                })
+            }
 
             res.json({
                 ok: true,
-                usuario: usuarioGuardado,
-                img: nombreArchivo
+                img: nombreArchivo,
+                msg: 'Imagen subida correctamente',
+                updated
             })
 
         })
 
     })
+    
 }
  
 function borraArchivo(nombreImagen, tipo) {

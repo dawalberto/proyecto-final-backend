@@ -1,5 +1,4 @@
 const app = require('express')()
-const _ = require('underscore')
 const bcrypt = require('bcrypt')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')

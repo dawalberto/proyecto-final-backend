@@ -1,5 +1,4 @@
 const app = require('express')()
-const _ = require('underscore')
 const Concierto = require('../models/concierto')
 const { verificarToken } = require('../middlewares/autenticacion')
 

@@ -31,8 +31,8 @@ app.get('/usuarios', (req, res) => {
 app.post('/usuarios', (req, res) => {
 
     let body = req.body
-    let redes = null
-    let fechaNac = null
+    let redes = undefined
+    let fechaNac = undefined
 
     if (!body.password) {
         return res.status(400).json({

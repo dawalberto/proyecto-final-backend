@@ -207,9 +207,9 @@ app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
         }
 
         if (updated.nModified === 0) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Usuario no actualizado o no encontrado'
+            return res.json({
+                ok: true,
+                msg: 'Nada para actualizar'
             })
         }
 

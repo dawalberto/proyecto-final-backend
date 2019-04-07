@@ -44,18 +44,19 @@ app.put('/uploads/:tipo/:id', [verificarToken, verificarUsuario], (req, res) => 
     // Extensiones permitidas
     let extensionesValidas = ['png', 'jpg', 'jpeg']
 
-    if (extensionesValidas.indexOf(extension) < 0) {
-        return res.status(400).json({
-            ok: false,
-            err: {
-                extension,
-                message: 'Las extensiones permitidas son ' + extensionesValidas.toString(),
-            }
-        })
-    }
+    // Ahora me pueden colar cualquier extension
+    // if (extensionesValidas.indexOf(extension) < 0) {
+    //     return res.status(403).json({
+    //         ok: false,
+    //         err: {
+    //             extension,
+    //             message: 'Las extensiones permitidas son ' + extensionesValidas.toString(),
+    //         }
+    //     })
+    // }
 
     // Cambiar nombre al archivo
-    let nombreArchivo = `${ id }-${ new Date().getMilliseconds() }${ new Date().getDate() }.${ extension }`
+    let nombreArchivo = `${ id }-${ new Date().getMilliseconds() }${ new Date().getDate() }.png`
 
     archivo.mv(`uploads/${ tipo }/${ nombreArchivo }`, (err) => {
 

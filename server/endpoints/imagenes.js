@@ -9,7 +9,7 @@ app.get('/imagenes/:tipo/:img', (req, res) => {
     let img = req.params.img
 
     let pathImagen = path.resolve(__dirname, `../../uploads/${ tipo }/${ img }`)
-    let noImagePath = path.resolve(__dirname, '../assets/no-image.jpg')
+    let noImagePath = path.resolve(__dirname, '../assets/no-image.png')
 
     if (fs.existsSync( pathImagen )) {
         res.sendFile(pathImagen)

@@ -71,7 +71,7 @@ app.get('/conciertos/:id', (req, res) => {
     let id = req.params.id
 
     Concierto.findOne({ _id: id })
-        .populate('usuario', 'nombre apellidos guitarra')
+        .populate('usuario', 'nombre apellidos img')
         .exec((err, conciertoDB) => {
 
             if (err) {
@@ -251,7 +251,7 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
     let id = req.params.id
 
     Concierto.find({usuario: {_id: id}})
-        .populate('usuario', 'nombre apellidos guitarra')
+        .populate('usuario', 'nombre apellidos img')
         .exec((err, conciertosDB) => {
 
         if (err) {

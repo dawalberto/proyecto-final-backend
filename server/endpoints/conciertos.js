@@ -6,7 +6,7 @@ const { verificarToken } = require('../middlewares/autenticacion')
 app.get('/conciertos', (req, res) => {
 
     Concierto.find({})
-        .populate('usuario', 'nombre apellidos guitarra')
+        .populate('usuario', 'nombre apellidos img')
         .populate('programa', 'nombre obras')
         .exec((err, conciertosDB) => {
 

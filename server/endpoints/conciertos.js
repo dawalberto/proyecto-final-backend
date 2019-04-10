@@ -264,7 +264,7 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
         let recuento = conciertosDB.length
 
         if (recuento === 0) {
-            return res.status(500).json({
+            return res.json({
                 ok: false,
                 msg: 'No se encontraron conciertos para este usuario o no existe el usuario'
             })

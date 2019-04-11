@@ -34,9 +34,12 @@ app.post('/programas', verificarToken, (req, res) => {
     let body = req.body
     let obras = body.obras
 
+    console.log('body', body)
+
     try {
         let bodyParsed = qs.parse(body)
         obras = qs.parse(bodyParsed)
+        obras = obras.obras
     }
     catch {
         return res.status(500).json({

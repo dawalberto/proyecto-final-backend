@@ -1,4 +1,5 @@
 const app = require('express')()
+const qs = require('qs')
 const Programa = require('../models/programa')
 const { verificarToken } = require('../middlewares/autenticacion')
 
@@ -34,7 +35,8 @@ app.post('/programas', verificarToken, (req, res) => {
     let obras = body.obras
 
     try {
-        obras = JSON.parse(obras)
+        let bodyParsed = qs.parse(body)
+        obras = qs.parse(bodyParsed)
     }
     catch {
         return res.status(500).json({

@@ -255,13 +255,6 @@ app.get('/programas/usuarios/:id', (req, res) => {
 
         let recuento = programasDB.length
 
-        if (recuento === 0) {
-            return res.status(500).json({
-                ok: false,
-                msg: 'No se encontraron programas para este usuario o no existe el usuario'
-            })
-        }
-
         res.json({
             ok: true,
             total: recuento,

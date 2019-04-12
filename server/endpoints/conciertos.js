@@ -252,6 +252,7 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
 
     Concierto.find({usuario: {_id: id}})
         .populate('usuario', 'nombre apellidos img')
+        .populate('programa', 'nombre obras')        
         .exec((err, conciertosDB) => {
 
         if (err) {

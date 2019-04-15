@@ -6,6 +6,7 @@ const { verificarToken } = require('../middlewares/autenticacion')
 app.get('/conciertos', (req, res) => {
 
     Concierto.find({})
+        .sort({ fecha: 1 })
         .populate('usuario', 'nombre apellidos img')
         .populate('programa', 'nombre obras')
         .exec((err, conciertosDB) => {
@@ -71,6 +72,7 @@ app.get('/conciertos/:id', (req, res) => {
     let id = req.params.id
 
     Concierto.findOne({ _id: id })
+        .sort({ fecha: 1 })
         .populate('usuario', 'nombre apellidos img')
         .exec((err, conciertoDB) => {
 
@@ -251,6 +253,7 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
     let id = req.params.id
 
     Concierto.find({usuario: {_id: id}})
+        .sort({ fecha: 1 })
         .populate('usuario', 'nombre apellidos img')
         .populate('programa', 'nombre obras')        
         .exec((err, conciertosDB) => {

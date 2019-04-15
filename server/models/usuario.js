@@ -78,6 +78,10 @@ let usuarioSchema = new Schema({
         type: Boolean,
         default: true
     },
+    seguidores: {
+        type: Array,
+        required: false
+    },
     fechaRegistro: {
         type: Date,
         default: new Date()

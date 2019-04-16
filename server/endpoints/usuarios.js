@@ -184,8 +184,6 @@ app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     }
 
-    reqBody.email ? body.email = reqBody.email : ''
-    reqBody.nomUsuario ? body.nomUsuario = reqBody.nomUsuario : ''
     reqBody.nombre ? body.nombre = reqBody.nombre : ''
     reqBody.apellidos ? body.apellidos = reqBody.apellidos : ''
     reqBody.img ? body.img = reqBody.img : ''
@@ -226,6 +224,39 @@ app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     let id = req.params.id
+    let supposedPassword = req.body.supposedPassword
+
+    if (supposedPassword === null || supposedPassword === undefined || supposedPassword === '') {
+        return res.status(400).json({
+            ok: false,
+            msg: 'Contraseña obligatoria'
+        })
+    }
+
+    Usuario.findById(id, (err, usuarioDB) => {
+
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario no encontrado',
+                err
+            })
+        }
+
+        if (!usuarioDB || !usuarioDB.estado) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario no encontrado'
+            })
+        }
+
+        if ( !bcrypt.compareSync(supposedPassword, usuarioDB.password) ) {
+            return res.status(401).json({
+                ok: false,
+                msg: 'Contraseña incorrecta'
+            })
+        }
+    })
 
     Usuario.updateOne({_id: id}, {estado: false}, (err, deleted) => {
 
@@ -250,19 +281,12 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
         })
 
 
-        Concierto.remove({usuario: {_id: id}}, (err, conciertosDB) => {
+        Concierto.deleteOne({usuario: {_id: id}}, (err, conciertoDeleted) => {
 
             if (err) {
                 return res.status(500).json({
                     ok: false,
                     err
-                })
-            }
-
-            if (conciertosDB.length === 0) {
-                return res.status(500).json({
-                    ok: false,
-                    msg: 'No se encontraron conciertos para este usuario'
                 })
             }
 

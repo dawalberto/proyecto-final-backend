@@ -256,43 +256,45 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
                 msg: 'Contraseña incorrecta'
             })
         }
-    })
 
-    Usuario.updateOne({_id: id}, {estado: false}, (err, deleted) => {
-
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                err
-            })
-        }
-
-        if (deleted.nModified === 0) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Usuario no encontrado'
-            })
-        }
-
-        res.json({
-            ok: true,
-            msg: 'Eliminado correctamente',
-            delete: deleted
-        })
-
-
-        Concierto.deleteOne({usuario: {_id: id}}, (err, conciertoDeleted) => {
-
+        Usuario.updateOne({_id: id}, {estado: false}, (err, deleted) => {
+    
             if (err) {
                 return res.status(500).json({
                     ok: false,
                     err
                 })
             }
-
+    
+            if (deleted.nModified === 0) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Usuario no encontrado'
+                })
+            }
+    
+            res.json({
+                ok: true,
+                msg: 'Eliminado correctamente',
+                delete: deleted
+            })
+    
+    
+            Concierto.deleteOne({usuario: {_id: id}}, (err, conciertoDeleted) => {
+    
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        err
+                    })
+                }
+    
+            })
+    
         })
-
+        
     })
+
 
 })
 

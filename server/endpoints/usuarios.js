@@ -185,7 +185,6 @@ app.put('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
     reqBody.email ? body.email = reqBody.email : ''
     reqBody.nomUsuario ? body.nomUsuario = reqBody.nomUsuario : ''
-    reqBody.password ? body.password = bcrypt.hashSync(reqBody.password, 10) : ''
     reqBody.nombre ? body.nombre = reqBody.nombre : ''
     reqBody.apellidos ? body.apellidos = reqBody.apellidos : ''
     reqBody.img ? body.img = reqBody.img : ''
@@ -303,6 +302,80 @@ app.get('/usuarios/buscar/:nombre', (req, res) => {
             })
 
         })
+
+})
+
+app.post('/usuarios/:id/change-password', [verificarToken, verificarUsuario], (req, res) => {
+
+    let id = req.params.id
+    let supposedPassword = req.body.supposedPassword
+    let newPassword = req.body.newPassword
+
+    if (supposedPassword === null || supposedPassword === undefined || supposedPassword === '') {
+        return res.status(500).json({
+            ok: false,
+            msg: 'Contraseña obligatoria'
+        })
+    }
+
+    if (newPassword === null || newPassword === undefined || newPassword === '') {
+        return res.status(500).json({
+            ok: false,
+            msg: 'Contraseña obligatoria'
+        })
+    }
+
+    Usuario.findById(id, (err, usuarioDB) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'Usuario no encontrado',
+                err
+            })
+        }
+
+        if (!usuarioDB || !usuarioDB.estado) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario no encontrado'
+            })
+        }
+
+        if ( !bcrypt.compareSync(supposedPassword, usuarioDB.password) ) {
+            return res.status(401).json({
+                ok: false,
+                msg: 'Contraseña incorrecta'
+            })
+        }
+
+        newPassword = bcrypt.hashSync(newPassword, 10)
+
+        Usuario.updateOne({_id: id, estado: true}, { password: newPassword }, (err, updated) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+    
+            if (updated.nModified === 0) {
+                return res.json({
+                    ok: true,
+                    msg: 'Nada para actualizar'
+                })
+            }
+    
+            res.json({
+                ok: true,
+                msg: 'Contraseña actualizada',
+                update: updated
+            })
+    
+        })
+
+    })
 
 })
 

@@ -108,7 +108,9 @@ app.put('/programas/:id', verificarToken, (req, res) => {
     let obras = body.obras
 
     try {
-        obras = JSON.parse(obras)
+        let bodyParsed = qs.parse(body)
+        obras = qs.parse(bodyParsed)
+        obras = obras.obras
     }
     catch {
         return res.status(500).json({
@@ -159,9 +161,9 @@ app.put('/programas/:id', verificarToken, (req, res) => {
             }
     
             if (updated.nModified === 0) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'Programa no encontrado o no actualizado'
+                return res.json({
+                    ok: true,
+                    msg: 'Programa sin cambios para actualizar'
                 })
             }
     

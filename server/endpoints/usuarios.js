@@ -1,5 +1,6 @@
 const app = require('express')()
 const bcrypt = require('bcrypt')
+const qs = require('qs')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')
 const { verificarToken, verificarUsuario } = require('../middlewares/autenticacion')
@@ -312,14 +313,14 @@ app.post('/usuarios/:id/change-password', [verificarToken, verificarUsuario], (r
     let newPassword = req.body.newPassword
 
     if (supposedPassword === null || supposedPassword === undefined || supposedPassword === '') {
-        return res.status(500).json({
+        return res.status(400).json({
             ok: false,
             msg: 'Contraseña obligatoria'
         })
     }
 
     if (newPassword === null || newPassword === undefined || newPassword === '') {
-        return res.status(500).json({
+        return res.status(400).json({
             ok: false,
             msg: 'Contraseña obligatoria'
         })
@@ -328,7 +329,7 @@ app.post('/usuarios/:id/change-password', [verificarToken, verificarUsuario], (r
     Usuario.findById(id, (err, usuarioDB) => {
 
         if (err) {
-            return res.status(500).json({
+            return res.status(400).json({
                 ok: false,
                 msg: 'Usuario no encontrado',
                 err

@@ -226,6 +226,8 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
     let id = req.params.id
     let supposedPassword = req.body.supposedPassword
 
+    console.log(req.body)
+
     if (supposedPassword === null || supposedPassword === undefined || supposedPassword === '') {
         return res.status(400).json({
             ok: false,
@@ -292,7 +294,7 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
             })
     
         })
-        
+
     })
 
 

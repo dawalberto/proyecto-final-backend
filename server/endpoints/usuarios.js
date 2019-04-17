@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const qs = require('qs')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')
+const Programa = require('../models/programa')
 const { verificarToken, verificarUsuario } = require('../middlewares/autenticacion')
 
 
@@ -226,8 +227,6 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
     let id = req.params.id
     let supposedPassword = req.body.supposedPassword
 
-    console.log(req.body)
-
     if (supposedPassword === null || supposedPassword === undefined || supposedPassword === '') {
         return res.status(400).json({
             ok: false,
@@ -281,8 +280,7 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
                 delete: deleted
             })
     
-    
-            Concierto.deleteOne({usuario: {_id: id}}, (err, conciertoDeleted) => {
+            Programa.deleteMany({usuario: {_id: id}}, (err, conciertoDeleted) => {
     
                 if (err) {
                     return res.status(500).json({
@@ -291,6 +289,17 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
                     })
                 }
     
+                Concierto.deleteMany({usuario: {_id: id}}, (err, programaDeleted) => {
+        
+                    if (err) {
+                        return res.status(500).json({
+                            ok: false,
+                            err
+                        })
+                    }
+        
+                })
+
             })
     
         })

@@ -284,5 +284,66 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
 
 })
 
+app.get('/conciertos/this/week', (req, res) => {
+
+    let today = new Date()
+    let firstDayWeek = new Date()
+    let lastDayWeek = new Date()
+
+    switch (today.getDay()) {
+        case 1:
+            lastDayWeek.setDate(lastDayWeek.getDate() + 6)
+        break;
+        case 2:
+            firstDayWeek.setDate(firstDayWeek.getDate() - 2)
+            lastDayWeek.setDate(lastDayWeek.getDate() + 5)
+        break;
+        case 3:
+            firstDayWeek.setDate(firstDayWeek.getDate() - 3)
+            lastDayWeek.setDate(lastDayWeek.getDate() + 4)
+        break;
+        case 4:
+            firstDayWeek.setDate(firstDayWeek.getDate() - 4)
+            lastDayWeek.setDate(lastDayWeek.getDate() + 3)
+        break;
+        case 5:
+            firstDayWeek.setDate(firstDayWeek.getDate() - 5)
+            lastDayWeek.setDate(lastDayWeek.getDate() + 2)
+        break;
+        case 6:
+            firstDayWeek.setDate(firstDayWeek.getDate() - 6)
+            lastDayWeek.setDate(lastDayWeek.getDate() + 1)
+        break;
+        case 0:
+            firstDayWeek.setDate(firstDayWeek.getDate() - 7)
+        break;
+    }
+    
+
+    Concierto.find({ fecha: { $gte:firstDayWeek, $lt: lastDayWeek } })
+        .sort({ fecha: 1 })
+        .populate('usuario', 'nombre apellidos img')
+        .populate('programa', 'nombre obras')
+        .exec((err, conciertosDB) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            let recuento = conciertosDB.length
+
+            res.json({
+                ok: true,
+                total: recuento,
+                conciertos: conciertosDB
+            })
+
+        })
+
+
+})
 
 module.exports = app

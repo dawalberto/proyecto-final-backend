@@ -346,4 +346,42 @@ app.get('/conciertos/this/week', (req, res) => {
 
 })
 
+app.get('/conciertos/buscar/:titulo', (req, res) => {
+
+    let titulo = req.params.titulo
+
+    let regex = new RegExp(titulo, 'i')
+
+    Concierto.find({ titulo: regex })
+        .sort({ fecha: 1 })
+        .populate('usuario', 'nombre apellidos img')
+        .populate('programa', 'nombre obras')
+        .exec((err, buesquedas) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            let recuento = buesquedas.length
+
+            if (recuento === 0) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: `No se encontro ningún concierto con el titulo '${titulo}'`
+                })
+            }
+
+            res.json({
+                ok: true,
+                total: recuento,
+                conciertos: buesquedas
+            })
+
+        })
+
+})
+
 module.exports = app

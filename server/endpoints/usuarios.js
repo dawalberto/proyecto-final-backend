@@ -43,6 +43,14 @@ app.post('/usuarios', (req, res) => {
         })
     }
 
+    let regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    if (!regEx.test(body.password)) {
+        return res.status(400).json({
+            ok: false,
+            msg: 'La contraseña debe tener como mínimo 8 caracteres, al menos una letra minúscula, una mayúscula, un número y un caracter especial(@ $ ! % * ? &)'
+        })
+    }
+
     if (body.redes) {
 
         try {

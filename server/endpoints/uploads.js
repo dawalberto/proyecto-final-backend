@@ -6,7 +6,7 @@ const Usuario = require('../models/usuario')
 const { verificarToken, verificarUsuario } = require('../middlewares/autenticacion')
 
 
-app.use(fileUpload())
+app.use( fileUpload({ useTempFiles: true }) )
 
 
 app.put('/uploads/:tipo/:id', [verificarToken, verificarUsuario], (req, res) => {

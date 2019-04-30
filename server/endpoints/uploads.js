@@ -1,5 +1,6 @@
 const app = require('express')()
 const fileUpload = require('express-fileupload')
+const cloudinary = require('cloudinary').v2
 const fs = require('fs')
 const path = require('path')
 const Usuario = require('../models/usuario')
@@ -7,6 +8,12 @@ const { verificarToken, verificarUsuario } = require('../middlewares/autenticaci
 
 
 app.use( fileUpload({ useTempFiles: true }) )
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
 
 app.put('/uploads/:tipo/:id', [verificarToken, verificarUsuario], (req, res) => {
@@ -100,6 +107,21 @@ function imagenUsuario(id, res, nombreArchivo) {
         }
 
         borraArchivo(usuarioDB.img, 'imgusuarios')
+
+        //Aquí va lo de cloudinary
+        cloudinary.uploader.upload(`/uploads/imgusuarios/${ nombreArchivo }`, {tags:'basic_sample'}, (err, imageUpload) => {
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+    
+            res.json({
+                ok: true,
+                imageUpload
+            })
+        })
 
         Usuario.updateOne({ _id: id }, { img: nombreArchivo }, (err, updated) => {
 

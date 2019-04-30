@@ -108,23 +108,8 @@ function imagenUsuario(id, res, nombreArchivo) {
 
         borraArchivo(usuarioDB.img, 'imgusuarios')
 
-        //Aquí va lo de cloudinary
-        cloudinary.uploader.upload(`/uploads/imgusuarios/${ nombreArchivo }`, {tags:'basic_sample'}, (err, imageUpload) => {
-            if (err) {
-                return res.status(500).json({
-                    ok: false,
-                    err
-                })
-            }
-    
-            res.json({
-                ok: true,
-                imageUpload
-            })
-        })
-
-        Usuario.updateOne({ _id: id }, { img: nombreArchivo }, (err, updated) => {
-
+        // Aquí va lo de cloudinary
+        cloudinary.uploader.upload(`uploads/imgusuarios/${ nombreArchivo }`, { public_id: `imgusuarios/${ nombreArchivo }` }, (err, imageUpload) => {
             if (err) {
                 return res.status(500).json({
                     ok: false,
@@ -132,21 +117,32 @@ function imagenUsuario(id, res, nombreArchivo) {
                 })
             }
 
-            if (updated.nModified === 0) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'Usuario no encontrado o no actualizado'
+            Usuario.updateOne({ _id: id }, { img: imageUpload.secure_url }, (err, updated) => {
+
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        err
+                    })
+                }
+
+                if (updated.nModified === 0) {
+                    return res.status(400).json({
+                        ok: false,
+                        msg: 'Usuario no encontrado o no actualizado'
+                    })
+                }
+
+                res.json({
+                    ok: true,
+                    img: imageUpload.secure_url,
+                    msg: 'Imagen subida correctamente',
+                    updated
                 })
-            }
 
-            res.json({
-                ok: true,
-                img: nombreArchivo,
-                msg: 'Imagen subida correctamente',
-                updated
             })
-
         })
+
 
     })
     

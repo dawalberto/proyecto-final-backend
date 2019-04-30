@@ -6,7 +6,6 @@ app.use( require('./conciertos') )
 app.use( require('./programas') )
 app.use( require('./login') )
 app.use( require('./uploads') )
-app.use( require('./imagenes') )
 
 
 module.exports = app

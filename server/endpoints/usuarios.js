@@ -319,11 +319,20 @@ app.delete('/usuarios/:id', [verificarToken, verificarUsuario], (req, res) => {
 
 app.get('/usuarios/buscar/:nombre', (req, res) => {
 
-    let nombre = req.params.nombre
+    let nombreCompletoArray = req.params.nombre.split(" ")
+    let nombre = nombreCompletoArray[0]
+    nombreCompletoArray.splice(0, 1)
+    let apellidos = null
+    if (nombreCompletoArray.length !== 0) {
+        apellidos = nombreCompletoArray.toString()
+        apellidos = apellidos.replace(/(,)/g, ' ')
+    }
 
-    let regex = new RegExp(nombre, 'i')
+    let regexNom = new RegExp(nombre, 'i')
+    let regexApellidos = new RegExp(apellidos, 'i')
 
-    Usuario.find({ $or: [ {nombre: regex}, {apellidos: regex} ] , estado: true }, (err, buesquedas) => {
+    if (apellidos !== null) {
+        Usuario.find({ $and: [ {nombre: regexNom}, {apellidos: regexApellidos} ] , estado: true }, (err, buesquedas) => {
 
             if (err) {
                 return res.status(500).json({
@@ -348,6 +357,33 @@ app.get('/usuarios/buscar/:nombre', (req, res) => {
             })
 
         })
+    } else {
+        Usuario.find({ $or: [ {nombre: regexNom}, {apellidos: regexApellidos} ] , estado: true }, (err, buesquedas) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+
+            let recuento = buesquedas.length
+
+            if (recuento === 0) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: `No se encontro ningún usuario con el nombre '${nombre}'`
+                })
+            }
+
+            res.json({
+                ok: true,
+                total: recuento,
+                usuarios: buesquedas
+            })
+
+        })
+    }
 
 })
 

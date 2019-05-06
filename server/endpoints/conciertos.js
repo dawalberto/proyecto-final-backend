@@ -287,8 +287,8 @@ app.get('/conciertos/usuarios/:id', (req, res) => {
 app.get('/conciertos/this/week', (req, res) => {
 
     let today = new Date()
-    let firstDayWeek = new Date()
-    let lastDayWeek = new Date()
+    let firstDayWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0)
+    let lastDayWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0)
 
     switch (today.getDay()) {
         case 1:

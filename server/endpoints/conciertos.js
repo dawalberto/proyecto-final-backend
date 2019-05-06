@@ -1,6 +1,44 @@
 const app = require('express')()
+const nodemailer = require('nodemailer')
+const transporter = require('../config/email')
 const Concierto = require('../models/concierto')
+const Usuario = require('../models/usuario')
 const { verificarToken } = require('../middlewares/autenticacion')
+const bodyEmail = require('../templates/email')
+
+
+function sendEmail(to, concierto, usuario) {
+
+    let amp = bodyEmail(concierto, usuario)
+    let html = `
+    <h3>${ concierto.titulo }</h3>
+    <hr>
+    <p><b>${ usuario.nombre } ${ usuario.apellidos }</b> tocará próximamente y estás invitado!</p>
+    <p>El concierto tendrá lugar el día <b>${ new Date(concierto.fecha).toLocaleDateString() }</b> a las <b>${ concierto.hora }</b></p>
+    <p><b>Ubicación:</b> ${ concierto.ubicacion }</p>
+    <p><b>Precio:</b> ${ concierto.precio }</p>
+    <p>${ concierto.descripcion }</p>
+    <br>
+    <a href="clasicaguitarra.com">clasicaguitarra.com</a>
+    `
+
+    const mailOptions = {
+        from: 'clasicaguitarra.com.email@gmail.com',
+        to,
+        subject: concierto.titulo,
+        html,
+        amp
+    }
+
+    transporter.sendMail(mailOptions, (err, res) => {
+        if (err) {
+            console.log('err', err)
+        } else {
+            console.log('res', res)
+        }
+    })
+
+}
 
 
 app.get('/conciertos', (req, res) => {
@@ -57,10 +95,34 @@ app.post('/conciertos', verificarToken, (req, res) => {
             })
         }
         
-        res.json({
-            ok: true,
-            msg: 'Concierto creado correctamente',
-            concierto: conciertoDB
+        Usuario.findById(concierto.usuario, (err, usuarioDB) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    msg: 'Usuario no encontrado',
+                    err
+                })
+            }
+    
+            if (!usuarioDB.estado) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Usuario no encontrado'
+                })
+            }
+    
+            for (seguidor of usuarioDB.seguidores) {
+                sendEmail(seguidor, concierto, usuarioDB)
+                console.log(seguidor)
+            }
+
+            res.json({
+                ok: true,
+                msg: 'Concierto creado correctamente',
+                concierto: conciertoDB
+            })
+    
         })
 
     })

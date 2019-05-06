@@ -10,9 +10,12 @@ const { verificarToken, verificarUsuario } = require('../middlewares/autenticaci
 app.use( fileUpload({ useTempFiles: true }) )
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    // cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    // api_key: process.env.CLOUDINARY_API_KEY,
+    // api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: 'clasicaguitarra',
+    api_key: '149742215787213',
+    api_secret: 'UhpS7UVH1LlkqWS2Ngp9OEKXMuI'
 })
 
 

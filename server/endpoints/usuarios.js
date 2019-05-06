@@ -461,5 +461,36 @@ app.post('/usuarios/:id/change-password', [verificarToken, verificarUsuario], (r
 
 })
 
+app.post('/usuarios/:id/subscribe', (req, res) => {
+
+    let id = req.params.id
+    let seguidor = req.body.email
+
+    Usuario.updateOne({_id: id}, { $push: { seguidores: seguidor } }, (err, updated) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+        }
+
+        if (updated.nModified === 0) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario no encontrado o no actualizado'
+            })
+        }
+
+        res.json({
+            ok: true,
+            msg: 'Suscriptor agregado correctamente',
+            update: updated
+        })
+
+    })
+
+})
+
 
 module.exports = app

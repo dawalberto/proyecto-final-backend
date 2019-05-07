@@ -464,7 +464,7 @@ app.post('/usuarios/:id/change-password', [verificarToken, verificarUsuario], (r
 app.post('/usuarios/:id/subscribe', (req, res) => {
 
     let id = req.params.id
-    let seguidor = req.body.email
+    let suscriptor = req.body.email
 
     if (req.body.email === null || req.body.email === undefined || req.body.email === '') {
         return res.status(400).json({
@@ -473,7 +473,7 @@ app.post('/usuarios/:id/subscribe', (req, res) => {
         })
     }
 
-    Usuario.updateOne({_id: id}, { $push: { seguidores: seguidor } }, (err, updated) => {
+    Usuario.updateOne({_id: id}, { $push: { suscriptores: suscriptor } }, (err, updated) => {
 
         if (err) {
             return res.status(500).json({

@@ -98,8 +98,8 @@ app.post('/conciertos', verificarToken, (req, res) => {
                 })
             }
     
-            for (seguidor of usuarioDB.seguidores) {
-                sendEmail(seguidor, conciertoDB, usuarioDB)
+            for (suscriptor of usuarioDB.suscriptores) {
+                sendEmail(suscriptor, conciertoDB, usuarioDB)
             }
 
             res.json({

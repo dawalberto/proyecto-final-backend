@@ -78,7 +78,7 @@ let usuarioSchema = new Schema({
         type: Boolean,
         default: true
     },
-    seguidores: {
+    suscriptores: {
         type: Array,
         required: false
     },

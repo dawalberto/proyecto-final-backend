@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer')
 const transporter = require('../config/email')
 const Concierto = require('../models/concierto')
 const Usuario = require('../models/usuario')
+const Suscriptor = require('../models/suscriptor')
 const { verificarToken } = require('../middlewares/autenticacion')
 const bodyEmailHtml = require('../templates/email')
 
@@ -22,6 +23,26 @@ function sendEmail(to, concierto, usuario) {
         if (err) {
             console.log('err', err)
         }
+    })
+
+}
+
+function getSuscriptoresNewsletter() {
+
+    Suscriptor.find({}, (err, suscriptoresDB) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+        }
+
+        let suscriptores = suscriptoresDB.map(suscriptor => suscriptor.email)
+        console.log('suscriptores getSuscriptoresNewsletter', suscriptores)
+
+        return suscriptores
+
     })
 
 }
@@ -97,10 +118,37 @@ app.post('/conciertos', verificarToken, (req, res) => {
                     msg: 'Usuario no encontrado'
                 })
             }
-    
-            for (suscriptor of usuarioDB.suscriptores) {
-                sendEmail(suscriptor, conciertoDB, usuarioDB)
-            }
+            
+
+            Suscriptor.find({}, (err, suscriptoresDB) => {
+
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        err
+                    })
+                }
+        
+                let suscriptores = suscriptoresDB.map(suscriptor => suscriptor.email)
+                suscriptores = suscriptores.concat(usuarioDB.suscriptores)
+
+                for (let i = 0; i < suscriptores.length; i++) {
+                    let indexOf = suscriptores.indexOf(suscriptores[i])
+                    let lastIndexOf = suscriptores.lastIndexOf(suscriptores[i])
+
+                    indexOf !== lastIndexOf ? suscriptores.splice(lastIndexOf, 1) : ''
+                }
+
+                console.log('suscriptores', suscriptores)
+
+                for (suscriptor of suscriptores) {
+                    sendEmail(suscriptor, conciertoDB, usuarioDB)
+                }
+                
+            })
+
+
+
 
             res.json({
                 ok: true,

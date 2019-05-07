@@ -499,5 +499,36 @@ app.post('/usuarios/:id/subscribe', (req, res) => {
 
 })
 
+app.put('/usuarios/:id/unsuscribe', (req, res) => {
+
+    let id = req.params.id
+    let suscriptor = req.body.suscriptor
+
+    Usuario.updateOne({ _id: id }, { $pull: { suscriptores: suscriptor } }, (err, updated) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            })
+        }
+
+        if (updated.nModified === 0) {
+            return res.json({
+                ok: true,
+                msg: 'No se encontró usuario o suscriptor al que dar de baja'
+            })
+        }
+
+        res.json({
+            ok: true,
+            msg: 'Suscriptor dado de baja correctamentel',
+            update: updated
+        })
+
+    })
+
+})
+
 
 module.exports = app

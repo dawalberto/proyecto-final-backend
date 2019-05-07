@@ -522,7 +522,7 @@ app.put('/usuarios/:id/unsuscribe', (req, res) => {
 
         res.json({
             ok: true,
-            msg: 'Suscriptor dado de baja correctamentel',
+            msg: 'Suscriptor dado de baja correctamente',
             update: updated
         })
 

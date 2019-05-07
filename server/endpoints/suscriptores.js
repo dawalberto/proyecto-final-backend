@@ -53,9 +53,9 @@ app.post('/suscriptores', (req, res) => {
 })
 
 
-app.delete('/suscriptores/:email', (req, res) => {
+app.delete('/suscriptores', (req, res) => {
 
-    let email = req.params.email
+    let email = req.body.email
 
     Suscriptor.deleteOne({ email }, (err, deleted) => {
 

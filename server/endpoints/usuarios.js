@@ -466,6 +466,13 @@ app.post('/usuarios/:id/subscribe', (req, res) => {
     let id = req.params.id
     let seguidor = req.body.email
 
+    if (req.body.email === null || req.body.email === undefined || req.body.email === '') {
+        return res.status(400).json({
+            ok: false,
+            msg: 'El email es obligatorio'
+        })
+    }
+
     Usuario.updateOne({_id: id}, { $push: { seguidores: seguidor } }, (err, updated) => {
 
         if (err) {

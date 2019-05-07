@@ -27,26 +27,6 @@ function sendEmail(to, concierto, usuario) {
 
 }
 
-function getSuscriptoresNewsletter() {
-
-    Suscriptor.find({}, (err, suscriptoresDB) => {
-
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                err
-            })
-        }
-
-        let suscriptores = suscriptoresDB.map(suscriptor => suscriptor.email)
-        console.log('suscriptores getSuscriptoresNewsletter', suscriptores)
-
-        return suscriptores
-
-    })
-
-}
-
 
 app.get('/conciertos', (req, res) => {
 

@@ -254,19 +254,21 @@ function borraArchivo(nombreImagen, tipo) {
         fs.unlinkSync(pathImagen)
     }
 
-    let image = nombreImagen.split('/')
-    image = image[image.length - 1]
-    image = image.split('.')
-    image.splice(image.length - 1)
-    image = image.join().replace(/(,)/g, '.')
-
-    cloudinary.api.delete_resources(`${ tipo }/${ image }`, (err, res) => {
-        if (err) {
-            console.log('err', err)
-        } else {
-            console.log('res', res)
-        }
-    })
+    if (nombreImagen !== undefined) {
+        let image = nombreImagen.split('/')
+        image = image[image.length - 1]
+        image = image.split('.')
+        image.splice(image.length - 1)
+        image = image.join().replace(/(,)/g, '.')
+    
+        cloudinary.api.delete_resources(`${ tipo }/${ image }`, (err, res) => {
+            if (err) {
+                console.log('err', err)
+            } else {
+                console.log('res', res)
+            }
+        })
+    }
 
 }
 

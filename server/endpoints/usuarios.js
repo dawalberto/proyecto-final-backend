@@ -514,8 +514,8 @@ app.put('/usuarios/:id/unsuscribe', (req, res) => {
         }
 
         if (updated.nModified === 0) {
-            return res.json({
-                ok: true,
+            return res.status(400).json({
+                ok: false,
                 msg: 'No se encontró usuario o suscriptor al que dar de baja'
             })
         }

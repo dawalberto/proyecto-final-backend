@@ -18,6 +18,10 @@ let conciertoSchema = new Schema({
         type: String,
         required: [true, 'El título es obligatorio']
     },
+    img: {
+        type: String,
+        required: false
+    },
     descripcion: {
         type: String,
         required: [true, 'La descripción es obligatoria']

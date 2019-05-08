@@ -122,7 +122,7 @@ app.post('/conciertos', verificarToken, (req, res) => {
                 console.log('suscriptores', suscriptores)
 
                 for (suscriptor of suscriptores) {
-                    sendEmail(suscriptor, conciertoDB, usuarioDB)
+                    // sendEmail(suscriptor, conciertoDB, usuarioDB)
                 }
                 
             })

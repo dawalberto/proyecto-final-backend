@@ -205,6 +205,7 @@ app.put('/conciertos/:id', verificarToken, (req, res) => {
     reqBody.titulo ? body.titulo = reqBody.titulo : ''
     reqBody.programa ? body.programa = reqBody.programa : ''
     reqBody.descripcion ? body.descripcion = reqBody.descripcion : ''
+    reqBody.img ? body.img = reqBody.img : ''
     reqBody.precio ? body.precio = reqBody.precio : ''
     reqBody.ubicacion ? body.ubicacion = reqBody.ubicacion : ''
     reqBody.hora ? body.hora = reqBody.hora : ''
@@ -243,13 +244,6 @@ app.put('/conciertos/:id', verificarToken, (req, res) => {
                 return res.status(500).json({
                     ok: false,
                     err
-                })
-            }
-    
-            if (updated.nModified === 0) {
-                return res.status(400).json({
-                    ok: false,
-                    msg: 'Concierto no encontrado o no actualizado'
                 })
             }
     

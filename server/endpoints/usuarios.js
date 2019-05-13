@@ -1,10 +1,32 @@
 const app = require('express')()
 const bcrypt = require('bcrypt')
-const qs = require('qs')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')
 const Programa = require('../models/programa')
 const { verificarToken, verificarUsuario } = require('../middlewares/autenticacion')
+const transporter = require('../config/email')
+const moduleTemplateEmails = require('../templates/email')
+const bodyEmailHtmlConfirmSuscribe = moduleTemplateEmails.bodyEmailHtmlConfirmSuscribe
+
+
+function sendEmail(to, usuario, enlace) {
+
+    let html = bodyEmailHtmlConfirmSuscribe(usuario, enlace)
+    
+    const mailOptions = {
+        from: 'clasicaguitarra.com.email@gmail.com',
+        to,
+        subject: 'Confirmación suscripción',
+        html
+    }
+
+    transporter.sendMail(mailOptions, (err, res) => {
+        if (err) {
+            console.log('err', err)
+        }
+    })
+
+}
 
 
 app.get('/usuarios', (req, res) => {
@@ -461,17 +483,52 @@ app.post('/usuarios/:id/change-password', [verificarToken, verificarUsuario], (r
 
 })
 
-app.post('/usuarios/:id/subscribe', (req, res) => {
+app.post('/usuarios/:id/suscribe/:email', (req, res) => {
 
     let id = req.params.id
-    let suscriptor = req.body.email
+    let suscriptor = req.params.email
 
-    if (req.body.email === null || req.body.email === undefined || req.body.email === '') {
+    if (suscriptor === null || suscriptor === undefined || suscriptor === '') {
         return res.status(400).json({
             ok: false,
             msg: 'El email es obligatorio'
         })
     }
+
+    Usuario.findOne({ _id: id }, (err, usuarioDB) => {
+
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                msg: 'Usuario no encontrado',
+                err
+            })
+        }
+
+        if (!usuarioDB.estado) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario no encontrado'
+            })
+        }
+
+        let enlace = `http://localhost:3000/usuarios/${ id }/suscribe/${ suscriptor }/confirm`
+
+        sendEmail(suscriptor, usuarioDB, enlace)
+
+        res.json({
+            ok: true,
+            msg: 'Email de confirmación enviado correctamente'
+        })
+
+    })
+
+})
+
+app.get('/usuarios/:id/suscribe/:email/confirm', (req, res) => {
+
+    let id = req.params.id
+    let suscriptor = req.params.email
 
     Usuario.updateOne({_id: id}, { $push: { suscriptores: suscriptor } }, (err, updated) => {
 
@@ -489,11 +546,7 @@ app.post('/usuarios/:id/subscribe', (req, res) => {
             })
         }
 
-        res.json({
-            ok: true,
-            msg: 'Suscriptor agregado correctamente',
-            update: updated
-        })
+        res.redirect('https://clasicaguitarra.com')
 
     })
 

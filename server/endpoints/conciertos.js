@@ -1,16 +1,16 @@
 const app = require('express')()
-const nodemailer = require('nodemailer')
 const transporter = require('../config/email')
 const Concierto = require('../models/concierto')
 const Usuario = require('../models/usuario')
 const Suscriptor = require('../models/suscriptor')
 const { verificarToken } = require('../middlewares/autenticacion')
-const bodyEmailHtml = require('../templates/email')
+const moduleTemplateEmails = require('../templates/email')
+const bodyEmailHtmlConcierto = moduleTemplateEmails.bodyEmailHtmlConcierto
 
 
 function sendEmail(to, concierto, usuario) {
 
-    let html = bodyEmailHtml(concierto, usuario)
+    let html = bodyEmailHtmlConcierto(concierto, usuario)
     
     const mailOptions = {
         from: 'clasicaguitarra.com.email@gmail.com',

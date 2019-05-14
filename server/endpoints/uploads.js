@@ -1,23 +1,13 @@
 const app = require('express')()
 const fileUpload = require('express-fileupload')
-const cloudinary = require('cloudinary').v2
+const cloudinary = require('../config/cloudinary')
 const fs = require('fs')
 const path = require('path')
 const Usuario = require('../models/usuario')
 const Concierto = require('../models/concierto')
 const { verificarToken, verificarUsuario } = require('../middlewares/autenticacion')
 
-
 app.use( fileUpload({ useTempFiles: true }) )
-
-cloudinary.config({
-    // cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    // api_key: process.env.CLOUDINARY_API_KEY,
-    // api_secret: process.env.CLOUDINARY_API_SECRET
-    cloud_name: 'clasicaguitarra',
-    api_key: '149742215787213',
-    api_secret: 'UhpS7UVH1LlkqWS2Ngp9OEKXMuI'
-})
 
 
 app.put('/uploads/imgusuarios/:id', [verificarToken, verificarUsuario], (req, res) => {

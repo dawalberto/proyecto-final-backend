@@ -512,7 +512,7 @@ app.post('/usuarios/:id/suscribe/:email', (req, res) => {
             })
         }
 
-        let enlace = `https://clasicaguitarra.com/#/usuarios/${ id }/suscribe/${ suscriptor }/confirm`
+        let enlace = `https://clasicaguitarra-backend.herokuapp.com/usuarios/${ id }/suscribe/${ suscriptor }/confirm`
 
         sendEmail(suscriptor, usuarioDB, enlace)
 

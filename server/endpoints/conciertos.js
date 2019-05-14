@@ -4,6 +4,7 @@ const Concierto = require('../models/concierto')
 const Usuario = require('../models/usuario')
 const Suscriptor = require('../models/suscriptor')
 const { verificarToken } = require('../middlewares/autenticacion')
+const cloudinary = require('../config/cloudinary')
 const moduleTemplateEmails = require('../templates/email')
 const bodyEmailHtmlConcierto = moduleTemplateEmails.bodyEmailHtmlConcierto
 
@@ -11,7 +12,7 @@ const bodyEmailHtmlConcierto = moduleTemplateEmails.bodyEmailHtmlConcierto
 function sendEmail(to, concierto, usuario) {
 
     let html = bodyEmailHtmlConcierto(concierto, usuario, to)
-    
+
     const mailOptions = {
         from: 'clasicaguitarra.com.email@gmail.com',
         to,
@@ -122,7 +123,7 @@ app.post('/conciertos', verificarToken, (req, res) => {
                 console.log('suscriptores', suscriptores)
 
                 for (suscriptor of suscriptores) {
-                    // sendEmail(conciertoDB, usuarioDB, suscriptor)
+                    sendEmail(suscriptor, conciertoDB, usuarioDB)
                 }
                 
             })
@@ -286,6 +287,22 @@ app.delete('/conciertos/:id', verificarToken, (req, res) => {
             return res.status(401).json({
                 ok: false,
                 msg: 'Permiso denegado'
+            })
+        }
+
+        if (conciertoDB.img !== undefined) {
+            let image = conciertoDB.img.split('/')
+            image = image[image.length - 1]
+            image = image.split('.')
+            image.splice(image.length - 1)
+            image = image.join().replace(/(,)/g, '.')
+        
+            cloudinary.api.delete_resources(`imgconciertos/${ image }`, (err, res) => {
+                if (err) {
+                    console.log('err', err)
+                } else {
+                    console.log('res', res)
+                }
             })
         }
 

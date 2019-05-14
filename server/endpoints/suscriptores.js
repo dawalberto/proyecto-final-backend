@@ -87,6 +87,8 @@ app.get('/suscriptores/:suscriptor/confirm', (req, res) => {
     newSuscriptor.save((err, suscriptorDB) => {
 
         if (err) {
+            res.redirect('https://clasicaguitarra.com/#/thank-suscribe')
+
             return res.status(500).json({
                 ok: false,
                 err

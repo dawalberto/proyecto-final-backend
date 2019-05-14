@@ -543,6 +543,8 @@ app.get('/usuarios/:id/suscribe/:email/confirm', (req, res) => {
         let suscriptoresUser = usuarioDB.suscriptores
 
         if (suscriptoresUser.includes(suscriptor)) {
+            res.redirect('https://clasicaguitarra.com/#/thank-suscribe')
+
             return res.status(400).json({
                 ok: false,
                 msg: 'Este email ya está suscrito'

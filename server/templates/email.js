@@ -14,7 +14,7 @@ module.exports = {
             <br>
             <a href="clasicaguitarra.com">clasicaguitarra.com</a>
             <p>Si estás suscrito a este guitarrista y no quieres recibir más avisos de sus conciertos haga clic <a href="https://clasicaguitarra-backend.herokuapp.com/usuarios/${ usuario._id }/unsuscribe/${ suscriptor }">aquí</a>.</p>
-            <p>Si estás suscrito a las newsletter y no quieres recibir más correos haga clic <a href="https://clasicaguitarra-backend.herokuapp.com/suscriptores/${ usuario._id }">aquí</a>.</p>
+            <p>Si estás suscrito a las newsletter y no quieres recibir más correos haga clic <a href="https://clasicaguitarra-backend.herokuapp.com/suscriptores/${ suscriptor }">aquí</a>.</p>
         </div>
         `
     

@@ -10,7 +10,7 @@ const bodyEmailHtmlConcierto = moduleTemplateEmails.bodyEmailHtmlConcierto
 
 function sendEmail(to, concierto, usuario) {
 
-    let html = bodyEmailHtmlConcierto(concierto, usuario)
+    let html = bodyEmailHtmlConcierto(concierto, usuario, to)
     
     const mailOptions = {
         from: 'clasicaguitarra.com.email@gmail.com',
@@ -122,7 +122,7 @@ app.post('/conciertos', verificarToken, (req, res) => {
                 console.log('suscriptores', suscriptores)
 
                 for (suscriptor of suscriptores) {
-                    // sendEmail(suscriptor, conciertoDB, usuarioDB)
+                    // sendEmail(conciertoDB, usuarioDB, suscriptor)
                 }
                 
             })

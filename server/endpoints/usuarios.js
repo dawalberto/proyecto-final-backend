@@ -512,7 +512,7 @@ app.post('/usuarios/:id/suscribe/:email', (req, res) => {
             })
         }
 
-        let enlace = `http://localhost:3000/usuarios/${ id }/suscribe/${ suscriptor }/confirm`
+        let enlace = `https://clasicaguitarra.com/#/usuarios/${ id }/suscribe/${ suscriptor }/confirm`
 
         sendEmail(suscriptor, usuarioDB, enlace)
 
@@ -525,12 +525,13 @@ app.post('/usuarios/:id/suscribe/:email', (req, res) => {
 
 })
 
+// post suscriptor, método GET para que se pueda lanzar desde <a></a>
 app.get('/usuarios/:id/suscribe/:email/confirm', (req, res) => {
 
     let id = req.params.id
     let suscriptor = req.params.email
 
-    Usuario.updateOne({_id: id}, { $push: { suscriptores: suscriptor } }, (err, updated) => {
+    Usuario.findOne({_id: id}, (err, usuarioDB) => {
 
         if (err) {
             return res.status(500).json({
@@ -539,23 +540,43 @@ app.get('/usuarios/:id/suscribe/:email/confirm', (req, res) => {
             })
         }
 
-        if (updated.nModified === 0) {
+        let suscriptoresUser = usuarioDB.suscriptores
+
+        if (suscriptoresUser.includes(suscriptor)) {
             return res.status(400).json({
                 ok: false,
-                msg: 'Usuario no encontrado o no actualizado'
+                msg: 'Este email ya está suscrito'
             })
         }
 
-        res.redirect('https://clasicaguitarra.com')
+        Usuario.updateOne({_id: id}, { $push: { suscriptores: suscriptor } }, (err, updated) => {
+
+            if (err) {
+                return res.status(500).json({
+                    ok: false,
+                    err
+                })
+            }
+    
+            // if (updated.nModified === 0) {
+            //     return res.status(400).json({
+            //         ok: false,
+            //         msg: 'Usuario no encontrado o no actualizado'
+            //     })
+            // }
+    
+            res.redirect('https://clasicaguitarra.com/#/thank-suscribe')
+    
+        })
 
     })
 
 })
 
-app.put('/usuarios/:id/unsuscribe', (req, res) => {
+app.get('/usuarios/:id/unsuscribe/:email', (req, res) => {
 
     let id = req.params.id
-    let suscriptor = req.body.suscriptor
+    let suscriptor = req.params.email
 
     Usuario.updateOne({ _id: id }, { $pull: { suscriptores: suscriptor } }, (err, updated) => {
 
@@ -566,18 +587,20 @@ app.put('/usuarios/:id/unsuscribe', (req, res) => {
             })
         }
 
-        if (updated.nModified === 0) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'No se encontró usuario o suscriptor al que dar de baja'
-            })
-        }
+        // if (updated.nModified === 0) {
+        //     return res.status(400).json({
+        //         ok: false,
+        //         msg: 'No se encontró usuario o suscriptor al que dar de baja'
+        //     })
+        // }
 
-        res.json({
-            ok: true,
-            msg: 'Suscriptor dado de baja correctamente',
-            update: updated
-        })
+        // res.json({
+        //     ok: true,
+        //     msg: 'Suscriptor dado de baja correctamente',
+        //     update: updated
+        // })
+
+        res.redirect('https://clasicaguitarra.com/#/unsuscribe')
 
     })
 
